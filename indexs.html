@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4f46e5">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, private">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Nexus Bank | Secure Online Banking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, h4, h5, h6, .brand-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        :root {
+            --bg-primary: #f9fafb;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --gradient-from: #4f46e5;
+            --gradient-to: #7c3aed;
+        }
+
+        html.dark {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f9fafb;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --gradient-from: #6366f1;
+            --gradient-to: #a855f7;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        html.dark .glass-panel {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+        }
+
+        .transaction-item {
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            transform: translateX(10px);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        html.dark .transaction-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .modal-enter {
+            animation: modalEnter 0.3s ease-out forwards;
+        }
+
+        @keyframes modalEnter {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .bg-mesh {
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            min-height: 100%;
+            min-height: 100dvh;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: #6366f1;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-container {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 640px) {
+            .modal-container {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                border-radius: 1.5rem 1.5rem 0 0;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            z-index: 40;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        @media (min-width: 768px) {
+            .bottom-nav {
+                display: none;
+            }
+        }
+
+        .content-padding {
+            padding-bottom: 80px;
+        }
+
+        @media (min-width: 768px) {
+            .content-padding {
+                padding-bottom: 2rem;
+            }
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            border-radius: 12px;
+            background: #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        html.dark .theme-toggle {
+            background: #4b5563;
+        }
+
+        .theme-toggle-circle {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        html.dark .theme-toggle-circle {
+            left: 26px;
+            background: #1f2937;
+        }
+
+        .theme-icon {
+            width: 12px;
+            height: 12px;
+            color: #f59e0b;
+        }
+
+        html.dark .theme-icon {
+            color: #60a5fa;
+        }
+
+        .support-icon {
+            position: relative;
+        }
+
+        .support-icon::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #receiptModal, #receiptModal * { visibility: visible; }
+            #receiptModal {
+                position: fixed !important;
+                left: 0; top: 0; width: 100% !important; height: 100% !important;
+                background: white !important;
+                z-index: 99999 !important;
+                display: flex !important;
+                align-items: flex-start !important;
+                padding-top: 20px !important;
+            }
+            #receiptModal .absolute { display: none !important; }
+            #receiptModal .modal-content {
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                background: white !important;
+            }
+            #receiptContent {
+                background: white !important;
+                color: black !important;
+                padding: 20px !important;
+            }
+            #receiptModal .bg-gray-50 { display: none !important; }
+        }
+
+        .gradient-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            z-index: 100;
+            transition: transform 0.4s ease;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #6366f1;
+            transition: all 0.2s;
+        }
+        .pin-dot.filled {
+            background: #6366f1;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 transition-colors duration-300">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+        <div id="toastIcon"></div>
+        <div>
+            <div id="toastTitle" class="font-semibold text-sm"></div>
+            <div id="toastMessage" class="text-xs text-gray-300"></div>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION SCREENS -->
+    <div id="authScreen" class="fixed inset-0 z-50 bg-mesh overflow-y-auto">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="absolute top-4 right-4 z-50 flex items-center gap-3">
+            <button onclick="toggleTheme()" class="theme-toggle" aria-label="Toggle dark mode">
+                <div class="theme-toggle-circle">
+                    <i data-lucide="sun" class="theme-icon sun-icon"></i>
+                    <i data-lucide="moon" class="theme-icon moon-icon hidden"></i>
+                </div>
+            </button>
+        </div>
+
+        <div class="relative z-10 min-h-screen flex items-center justify-center p-4">
+            <!-- Login Form -->
+            <div id="loginForm" class="w-full max-w-md glass-panel rounded-3xl p-6 md:p-8 shadow-2xl modal-enter">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 gradient-card rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i data-lucide="landmark" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white mb-2 brand-font">Welcome Back</h1>
+                    <p class="text-gray-300 text-sm">Sign in to your Nexus Bank account</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-200 mb-2">Email Address</label>
+                        <input type="email" id="loginEmail" required 
+                            class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                            placeholder="Enter your email">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-200 mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password" id="loginPassword" required 
+                                class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all pr-12"
+                                placeholder="Enter your password">
+                            <button type="button" onclick="togglePassword('loginPassword', this)" 
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 password-toggle">
+                                <i data-lucide="eye" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-gray-600 text-primary-600 focus:ring-primary-500">
+                            <span class="text-sm text-gray-300">Remember me</span>
+                        </label>
+                        <button type="button" onclick="showForgotPassword()" class="text-sm text-primary-400 hover:text-primary-300">Forgot password?</button>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-500/30">
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-gray-300 text-sm">
+                        Don't have an account? 
+                        <button onclick="showRegister()" class="text-primary-400 hover:text-primary-300 font-medium">Create Account</button>
+                    </p>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-700/50">
+                    <button onclick="showImportSync()" class="w-full py-2.5 border border-primary-500/50 text-primary-400 rounded-xl text-sm hover:bg-primary-500/10 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        Restore Account with Sync Code
+                    </button>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="w-full max-w-md glass-panel rounded-3xl p-6 md:p-8 shadow-2xl hidden">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 gradient-card rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i data-lucide="user-plus" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white mb-2 brand-font">Create Account</h1>
+                    <p class="text-gray-300 text-sm">Join Nexus Bank today</p>
+                </div>
+
+                <form onsubmit="handleRegister(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-200 mb-2">Full Name</label>
+                        <input type="text" id="regName" required 
+                            class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                            placeholder="Enter your full name">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-200 mb-2">Email Address</label>
+                        <input type="email" id="regEmail" required 
+                            class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                            placeholder="Enter your email">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-200 mb-2">Phone Number</label>
+                        <input type="tel" id="regPhone" required 
+                            class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                            placeholder="Enter your phone number">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-200 mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password" id="regPassword" required minlength="6"
+                                class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all pr-12"
+                                placeholder="Create a password (min 6 chars)">
+                            <button type="button" onclick="togglePassword('regPassword', this)" 
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 password-toggle">
+                                <i data-lucide="eye" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-200 mb-2">Preferred Currency</label>
+                        <select id="regCurrency" 
+                            class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all">
+                            <option value="NGN">NGN - Nigerian Naira</option>
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - British Pound</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-500/30">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-gray-300 text-sm">
+                        Already have an account? 
+                        <button onclick="showLogin()" class="text-primary-400 hover:text-primary-300 font-medium">Sign In</button>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Import Sync Form -->
+            <div id="importSyncForm" class="w-full max-w-md glass-panel rounded-3xl p-6 md:p-8 shadow-2xl hidden">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 gradient-card rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i data-lucide="refresh-cw" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white mb-2 brand-font">Restore Account</h1>
+                    <p class="text-gray-300 text-sm">Paste your sync code from another device</p>
+                </div>
+
+                <form onsubmit="handleImportSync(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-200 mb-2">Sync Code</label>
+                        <textarea id="syncCodeInput" required rows="4"
+                            class="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all text-xs font-mono"
+                            placeholder="Paste your sync code here..."></textarea>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-500/30">
+                        Restore Account
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <button onclick="showLogin()" class="text-primary-400 hover:text-primary-300 text-sm font-medium">← Back to Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="mainApp" class="hidden min-h-screen">
+        <!-- Header -->
+        <header class="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800">
+            <div class="max-w-lg mx-auto px-4 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 gradient-card rounded-xl flex items-center justify-center shadow-lg">
+                        <i data-lucide="landmark" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-bold text-xl brand-font">Nexus</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="openSupport()" class="relative p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors support-icon">
+                        <i data-lucide="headphones" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+                    </button>
+
+                    <button onclick="toggleNotifications()" class="relative p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <i data-lucide="bell" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+                        <span id="notifBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold hidden">0</span>
+                    </button>
+
+                    <button onclick="toggleTheme()" class="theme-toggle" aria-label="Toggle dark mode">
+                        <div class="theme-toggle-circle">
+                            <i data-lucide="sun" class="theme-icon sun-icon"></i>
+                            <i data-lucide="moon" class="theme-icon moon-icon hidden"></i>
+                        </div>
+                    </button>
+
+                    <button onclick="navigateTo('profile')" class="w-9 h-9 rounded-full overflow-hidden border-2 border-primary-500">
+                        <img id="headerAvatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                        <div id="headerAvatarFallback" class="w-full h-full gradient-card flex items-center justify-center text-white font-bold text-sm"></div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Notifications Panel -->
+        <div id="notificationsPanel" class="hidden fixed inset-0 z-40 bg-black/50" onclick="toggleNotifications()">
+            <div class="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl transform transition-transform duration-300 translate-x-0" onclick="event.stopPropagation()">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                    <h3 class="font-bold text-lg">Notifications</h3>
+                    <button onclick="clearAllNotifications()" class="text-xs text-primary-600 hover:text-primary-700">Clear All</button>
+                </div>
+                <div id="notificationsList" class="overflow-y-auto h-full pb-20">
+                    <!-- Notifications injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <main class="max-w-lg mx-auto px-4 py-6 content-padding">
+
+            <!-- HOME PAGE -->
+            <div id="page-home" class="page-section space-y-6">
+                <!-- Balance Card -->
+                <div class="gradient-card rounded-3xl p-6 text-white shadow-xl shadow-primary-500/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+                    <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-10 -mb-10 blur-xl"></div>
+
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-white/80 text-sm">Total Balance</span>
+                            <select id="currencySelector" onchange="changeCurrency(this.value)" 
+                                class="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg px-3 py-1 text-sm text-white focus:outline-none">
+                                <option value="NGN" class="text-gray-900">NGN - Nigerian Naira</option>
+                                <option value="USD" class="text-gray-900">USD - US Dollar</option>
+                                <option value="EUR" class="text-gray-900">EUR - Euro</option>
+                                <option value="GBP" class="text-gray-900">GBP - British Pound</option>
+                            </select>
+                        </div>
+
+                        <div class="text-3xl md:text-4xl font-bold mb-4 brand-font tracking-tight" id="balanceDisplay">₦0.00</div>
+
+                        <div class="flex items-center gap-6 text-sm text-white/80">
+                            <div>
+                                <div class="text-white/60 text-xs mb-1">Account Number</div>
+                                <div class="font-mono" id="accountNumberDisplay">---</div>
+                            </div>
+                            <div>
+                                <div class="text-white/60 text-xs mb-1">Routing</div>
+                                <div class="font-mono" id="routingDisplay">021000021</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleBalanceVisibility()" class="absolute bottom-4 right-4 p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors">
+                        <i data-lucide="eye" id="balanceEyeIcon" class="w-4 h-4 text-white"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="navigateTo('transfer')" class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all text-left">
+                        <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-3">
+                            <i data-lucide="send" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                        </div>
+                        <div class="font-semibold text-sm">Send Money</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Transfer funds</div>
+                    </button>
+
+                    <button onclick="navigateTo('deposit')" class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all text-left">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-3">
+                            <i data-lucide="plus-circle" class="w-6 h-6 text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <div class="font-semibold text-sm">Add Money</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Deposit now</div>
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                <i data-lucide="trending-up" class="w-4 h-4 text-green-600"></i>
+                            </div>
+                            <span class="text-xs text-green-600 font-medium">+12%</span>
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Income</div>
+                        <div class="font-bold text-sm mt-1" id="incomeDisplay">₦0.00</div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                                <i data-lucide="trending-down" class="w-4 h-4 text-red-600"></i>
+                            </div>
+                            <span class="text-xs text-red-600 font-medium">-4%</span>
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Expenses</div>
+                        <div class="font-bold text-sm mt-1" id="expenseDisplay">₦0.00</div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                <i data-lucide="piggy-bank" class="w-4 h-4 text-blue-600"></i>
+                            </div>
+                            <span class="text-xs text-blue-600 font-medium">68%</span>
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Savings</div>
+                        <div class="font-bold text-sm mt-1">68%</div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-bold text-lg">Recent Transactions</h2>
+                        <button onclick="navigateTo('history')" class="text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline">View All</button>
+                    </div>
+                    <div id="recentTransactionsList" class="space-y-3">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSFER PAGE -->
+            <div id="page-transfer" class="page-section hidden space-y-6">
+                <h2 class="font-bold text-2xl brand-font">Send Money</h2>
+
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+                    <form onsubmit="handleTransfer(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Recipient Name</label>
+                            <input type="text" id="transferName" required
+                                class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                                placeholder="Enter recipient name">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Account Number</label>
+                            <input type="text" id="transferAccount" required
+                                class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                                placeholder="Enter account number">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Bank Name</label>
+                            <input type="text" id="transferBank" required
+                                class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                                placeholder="Enter bank name">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Amount</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold" id="transferCurrencySymbol">₦</span>
+                                <input type="number" id="transferAmount" required min="1" step="0.01"
+                                    class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                                    placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Description</label>
+                            <input type="text" id="transferDesc"
+                                class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                                placeholder="What's this for?">
+                        </div>
+
+                        <button type="submit" 
+                            class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-500/30">
+                            Send Money
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- DEPOSIT PAGE -->
+            <div id="page-deposit" class="page-section hidden space-y-6">
+                <h2 class="font-bold text-2xl brand-font">Add Money</h2>
+
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+                    <form onsubmit="handleDeposit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Amount</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold" id="depositCurrencySymbol">₦</span>
+                                <input type="number" id="depositAmount" required min="1" step="0.01"
+                                    class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                                    placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">From</label>
+                            <select id="depositSource"
+                                class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all">
+                                <option>Bank Transfer</option>
+                                <option>Card Payment</option>
+                                <option>Cash Deposit</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" 
+                            class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-500/30">
+                            Add Money
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-primary-50 dark:bg-primary-900/20 rounded-2xl p-4 border border-primary-100 dark:border-primary-800">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="info" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-0.5"></i>
+                        <div>
+                            <div class="font-medium text-sm text-primary-900 dark:text-primary-100">Deposit Info</div>
+                            <div class="text-xs text-primary-700 dark:text-primary-300 mt-1">Deposits are processed instantly and will reflect in your balance immediately.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTORY PAGE -->
+            <div id="page-history" class="page-section hidden space-y-6">
+                <h2 class="font-bold text-2xl brand-font">Transaction History</h2>
+
+                <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+                    <button onclick="filterTransactions('all')" id="filter-all" class="filter-btn px-5 py-2 rounded-xl bg-primary-600 text-white text-sm font-medium whitespace-nowrap">All</button>
+                    <button onclick="filterTransactions('income')" id="filter-income" class="filter-btn px-5 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm font-medium whitespace-nowrap">Income</button>
+                    <button onclick="filterTransactions('expense')" id="filter-expense" class="filter-btn px-5 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-sm font-medium whitespace-nowrap">Expense</button>
+                </div>
+
+                <div id="historyTransactionsList" class="space-y-3">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- CARDS PAGE -->
+            <div id="page-cards" class="page-section hidden space-y-6">
+                <h2 class="font-bold text-2xl brand-font">My Cards</h2>
+
+                <div id="cardsList" class="space-y-4">
+                    <!-- Injected via JS -->
+                </div>
+
+                <button onclick="showAddCard()" class="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl text-gray-500 dark:text-gray-400 hover:border-primary-500 hover:text-primary-500 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                    Add New Card
+                </button>
+            </div>
+
+            <!-- PROFILE PAGE -->
+            <div id="page-profile" class="page-section hidden space-y-6">
+                <!-- Profile Header -->
+                <div class="relative">
+                    <div class="h-32 gradient-card rounded-3xl"></div>
+                    <div class="absolute -bottom-12 left-4">
+                        <div class="relative">
+                            <div class="w-24 h-24 rounded-full border-4 border-white dark:border-gray-900 overflow-hidden bg-gray-200">
+                                <img id="profileAvatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                                <div id="profileAvatarFallback" class="w-full h-full gradient-card flex items-center justify-center text-white font-bold text-2xl"></div>
+                            </div>
+                            <button onclick="document.getElementById('avatarInput').click()" class="absolute bottom-0 right-0 w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-gray-900">
+                                <i data-lucide="camera" class="w-4 h-4"></i>
+                            </button>
+                            <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+                        </div>
+                    </div>
+                    <div class="absolute top-4 right-4">
+                        <button onclick="showEditProfile()" class="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-xl text-sm font-medium hover:bg-white/30 transition-all">
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-14">
+                    <h2 id="profileName" class="font-bold text-xl">---</h2>
+                    <p id="profileEmail" class="text-gray-500 dark:text-gray-400 text-sm">---</p>
+                </div>
+
+                <!-- Profile Info -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-500 dark:text-gray-400 mb-1">Full Name</label>
+                        <div id="profileNameField" class="px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 font-medium">---</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-500 dark:text-gray-400 mb-1">Email Address</label>
+                        <div id="profileEmailField" class="px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 font-medium">---</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-500 dark:text-gray-400 mb-1">Phone Number</label>
+                        <div id="profilePhoneField" class="px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 font-medium">---</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-500 dark:text-gray-400 mb-1">Account Number</label>
+                        <div id="profileAccountField" class="px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 font-medium">---</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-500 dark:text-gray-400 mb-1">Preferred Currency</label>
+                        <div id="profileCurrencyField" class="px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 font-medium">---</div>
+                    </div>
+                </div>
+
+                <!-- Sync Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h3 class="font-bold mb-3 flex items-center gap-2">
+                        <i data-lucide="smartphone" class="w-5 h-5 text-primary-600"></i>
+                        Cross-Device Sync
+                    </h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Use this to transfer your exact account to another phone or browser.</p>
+                    <div class="flex gap-2">
+                        <button onclick="exportSyncCode()" class="flex-1 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-medium hover:bg-primary-700 transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            Export Code
+                        </button>
+                        <button onclick="showImportSyncModal()" class="flex-1 py-2.5 border border-primary-600 text-primary-600 rounded-xl text-sm font-medium hover:bg-primary-50 transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            Import Code
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
+                    <h3 class="font-bold mb-2">Security</h3>
+
+                    <button onclick="showChangePassword()" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="lock" class="w-5 h-5 text-gray-500"></i>
+                            <span class="font-medium">Change Password</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                    </button>
+
+                    <button onclick="showSetPin()" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="hash" class="w-5 h-5 text-gray-500"></i>
+                            <span class="font-medium">Transaction PIN</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="pinStatus" class="text-xs text-primary-600 font-medium">Set PIN</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                        </div>
+                    </button>
+
+                    <button onclick="toggle2FA()" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="shield" class="w-5 h-5 text-gray-500"></i>
+                            <span class="font-medium">Two-Factor Auth</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="twoFaStatus" class="text-xs text-green-600 font-medium">Enabled</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Logout -->
+                <button onclick="handleLogout()" class="w-full py-3.5 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-2xl font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    Logout
+                </button>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="max-w-lg mx-auto px-4 h-16 flex items-center justify-around">
+                <button onclick="navigateTo('home')" class="nav-item flex flex-col items-center gap-1 text-primary-600 dark:text-primary-400" data-page="home">
+                    <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-medium">Home</span>
+                </button>
+
+                <button onclick="navigateTo('transfer')" class="nav-item flex flex-col items-center gap-1 text-gray-400" data-page="transfer">
+                    <i data-lucide="arrow-left-right" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-medium">Transfer</span>
+                </button>
+
+                <button onclick="navigateTo('deposit')" class="nav-item -mt-6">
+                    <div class="w-14 h-14 gradient-card rounded-full flex items-center justify-center shadow-lg shadow-primary-500/30">
+                        <i data-lucide="plus" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-[10px] font-medium text-gray-400 mt-1">Deposit</span>
+                </button>
+
+                <button onclick="navigateTo('history')" class="nav-item flex flex-col items-center gap-1 text-gray-400" data-page="history">
+                    <i data-lucide="history" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-medium">History</span>
+                </button>
+
+                <button onclick="navigateTo('cards')" class="nav-item flex flex-col items-center gap-1 text-gray-400" data-page="cards">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-medium">Cards</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- RECEIPT MODAL -->
+    <div id="receiptModal" class="modal-container hidden" onclick="closeReceiptModal(event)">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full mx-auto modal-enter" onclick="event.stopPropagation()">
+            <div id="receiptContent" class="p-6">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 gradient-card rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="check" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="font-bold text-xl">Transaction Receipt</h3>
+                    <p class="text-green-600 font-medium text-sm mt-1">Successful</p>
+                </div>
+
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span class="text-gray-500">Transaction ID</span>
+                        <span class="font-mono font-medium" id="receiptId">---</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span class="text-gray-500">Date & Time</span>
+                        <span class="font-medium" id="receiptDate">---</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span class="text-gray-500">Type</span>
+                        <span class="font-medium" id="receiptType">---</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span class="text-gray-500">Recipient</span>
+                        <span class="font-medium" id="receiptRecipient">---</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span class="text-gray-500">Description</span>
+                        <span class="font-medium" id="receiptDesc">---</span>
+                    </div>
+                    <div class="flex justify-between py-3 border-b-2 border-gray-200 dark:border-gray-600">
+                        <span class="font-bold">Amount</span>
+                        <span class="font-bold text-lg" id="receiptAmount">---</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-500">Balance After</span>
+                        <span class="font-medium" id="receiptBalance">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-3xl flex gap-3">
+                <button onclick="downloadReceipt()" class="flex-1 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    Save
+                </button>
+                <button onclick="printReceipt()" class="flex-1 py-3 border border-gray-300 dark:border-gray-600 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    Print
+                </button>
+            </div>
+
+            <button onclick="closeReceiptModalDirect()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- PIN MODAL -->
+    <div id="pinModal" class="modal-container hidden" onclick="closePinModal(event)">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full mx-auto p-6 modal-enter" onclick="event.stopPropagation()">
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="hash" class="w-7 h-7 text-primary-600"></i>
+                </div>
+                <h3 class="font-bold text-lg" id="pinTitle">Enter PIN</h3>
+                <p class="text-sm text-gray-500 mt-1" id="pinSubtitle">Confirm your transaction</p>
+            </div>
+
+            <div class="flex justify-center gap-4 mb-8">
+                <div class="pin-dot" id="pinDot1"></div>
+                <div class="pin-dot" id="pinDot2"></div>
+                <div class="pin-dot" id="pinDot3"></div>
+                <div class="pin-dot" id="pinDot4"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <button onclick="enterPinDigit(1)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">1</button>
+                <button onclick="enterPinDigit(2)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">2</button>
+                <button onclick="enterPinDigit(3)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">3</button>
+                <button onclick="enterPinDigit(4)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">4</button>
+                <button onclick="enterPinDigit(5)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">5</button>
+                <button onclick="enterPinDigit(6)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">6</button>
+                <button onclick="enterPinDigit(7)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">7</button>
+                <button onclick="enterPinDigit(8)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">8</button>
+                <button onclick="enterPinDigit(9)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">9</button>
+                <button onclick="clearPinDigit()" class="py-4 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 font-medium hover:bg-red-200 transition-all flex items-center justify-center">
+                    <i data-lucide="delete" class="w-5 h-5"></i>
+                </button>
+                <button onclick="enterPinDigit(0)" class="py-4 rounded-xl bg-gray-100 dark:bg-gray-700 text-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">0</button>
+                <button onclick="cancelPin()" class="py-4 rounded-xl bg-gray-200 dark:bg-gray-600 font-medium hover:bg-gray-300 dark:hover:bg-gray-500 transition-all text-sm">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD MODAL -->
+    <div id="changePasswordModal" class="modal-container hidden" onclick="closeModal('changePasswordModal', event)">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full mx-auto p-6 modal-enter" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-lg">Change Password</h3>
+                <button onclick="closeModalDirect('changePasswordModal')" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleChangePassword(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Current Password</label>
+                    <input type="password" id="currentPassword" required
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">New Password</label>
+                    <input type="password" id="newPassword" required minlength="6"
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" required
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all">
+                </div>
+                <button type="submit" class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all">
+                    Update Password
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT PROFILE MODAL -->
+    <div id="editProfileModal" class="modal-container hidden" onclick="closeModal('editProfileModal', event)">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full mx-auto p-6 modal-enter" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-lg">Edit Profile</h3>
+                <button onclick="closeModalDirect('editProfileModal')" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleEditProfile(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Full Name</label>
+                    <input type="text" id="editName" required
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Phone Number</label>
+                    <input type="tel" id="editPhone" required
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Preferred Currency</label>
+                    <select id="editCurrency"
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all">
+                        <option value="NGN">NGN - Nigerian Naira</option>
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="GBP">GBP - British Pound</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- IMPORT SYNC MODAL -->
+    <div id="importSyncModal" class="modal-container hidden" onclick="closeModal('importSyncModal', event)">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full mx-auto p-6 modal-enter" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-lg">Import Sync Code</h3>
+                <button onclick="closeModalDirect('importSyncModal')" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleImportSyncFromProfile(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Sync Code</label>
+                    <textarea id="profileSyncCodeInput" required rows="4"
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all text-xs font-mono"
+                        placeholder="Paste sync code here..."></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all">
+                    Import & Merge
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- EXPORT SYNC MODAL -->
+    <div id="exportSyncModal" class="modal-container hidden" onclick="closeModal('exportSyncModal', event)">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full mx-auto p-6 modal-enter" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-lg">Your Sync Code</h3>
+                <button onclick="closeModalDirect('exportSyncModal')" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <p class="text-sm text-gray-500 mb-3">Copy this code and paste it on your other device to restore your exact account.</p>
+            <textarea id="exportSyncCodeDisplay" readonly rows="6"
+                class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-xs font-mono mb-4"></textarea>
+
+            <button onclick="copySyncCode()" class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+                Copy to Clipboard
+            </button>
+        </div>
+    </div>
+
+    <!-- ADD CARD MODAL -->
+    <div id="addCardModal" class="modal-container hidden" onclick="closeModal('addCardModal', event)">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full mx-auto p-6 modal-enter" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-lg">Add New Card</h3>
+                <button onclick="closeModalDirect('addCardModal')" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAddCard(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Card Number</label>
+                    <input type="text" id="cardNumber" required maxlength="19" placeholder="0000 0000 0000 0000"
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all font-mono">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Expiry</label>
+                        <input type="text" id="cardExpiry" required maxlength="5" placeholder="MM/YY"
+                            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">CVV</label>
+                        <input type="text" id="cardCvv" required maxlength="4" placeholder="123"
+                            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all font-mono">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Cardholder Name</label>
+                    <input type="text" id="cardHolder" required
+                        class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-primary-500 transition-all uppercase">
+                </div>
+                <button type="submit" class="w-full py-3.5 gradient-card text-white font-semibold rounded-xl hover:opacity-90 transition-all">
+                    Add Card
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ======================
+        // DATABASE & SESSION
+        // ======================
+        const DB_KEY = 'nexusBank_v2_db';
+        const SESSION_KEY = 'nexusBank_v2_session';
+
+        let db = { users: {} };
+        let session = { currentEmail: null, loginTime: null };
+        let currentPin = '';
+        let pinCallback = null;
+        let balanceVisible = true;
+        let currentFilter = 'all';
+        let pendingAction = null;
+
+        // Currency symbols
+        const currencySymbols = {
+            NGN: '₦',
+            USD: '$',
+            EUR: '€',
+            GBP: '£'
+        };
+
+        // Initialize
+        function init() {
+            loadDB();
+            loadSession();
+            applyTheme();
+
+            if (session.currentEmail && db.users[session.currentEmail]) {
+                showMainApp();
+            } else {
+                showAuthScreen();
+            }
+
+            lucide.createIcons();
+        }
+
+        function loadDB() {
+            try {
+                const stored = localStorage.getItem(DB_KEY);
+                if (stored) {
+                    db = JSON.parse(stored);
+                }
+            } catch (e) {
+                db = { users: {} };
+            }
+        }
+
+        function saveDB() {
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+        }
+
+        function loadSession() {
+            try {
+                const stored = localStorage.getItem(SESSION_KEY);
+                if (stored) {
+                    session = JSON.parse(stored);
+                }
+            } catch (e) {
+                session = { currentEmail: null, loginTime: null };
+            }
+        }
+
+        function saveSession() {
+            localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        }
+
+        function clearSession() {
+            session = { currentEmail: null, loginTime: null };
+            localStorage.removeItem(SESSION_KEY);
+        }
+
+        function getCurrentUser() {
+            if (!session.currentEmail) return null;
+            return db.users[session.currentEmail] || null;
+        }
+
+        // ======================
+        // DETERMINISTIC GENERATION
+        // ======================
+        function stringToHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
+
+        function generateAccountNumber(email) {
+            const hash = stringToHash(email.toLowerCase().trim());
+            return String(hash % 9000000000 + 1000000000);
+        }
+
+        function generateRouting(email) {
+            return '021000021';
+        }
+
+        function hashPassword(password) {
+            // Simple hash for demo - in production use bcrypt
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                hash = ((hash << 5) - hash) + password.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return String(Math.abs(hash));
+        }
+
+        // ======================
+        // AUTHENTICATION
+        // ======================
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('importSyncForm').classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('importSyncForm').classList.add('hidden');
+        }
+
+        function showImportSync() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('importSyncForm').classList.remove('hidden');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // CRITICAL FIX: Strict credential validation
+            const user = db.users[email];
+            if (!user) {
+                showToast('Error', 'Account not found. Please check your email or create an account.', 'error');
+                return;
+            }
+
+            if (user.security.passwordHash !== hashPassword(password)) {
+                showToast('Error', 'Incorrect password. Please try again.', 'error');
+                return;
+            }
+
+            // Regenerate session - clear any stale data
+            clearSession();
+            session.currentEmail = email;
+            session.loginTime = Date.now();
+            saveSession();
+
+            showToast('Success', `Welcome back, ${user.profile.name}!`, 'success');
+            showMainApp();
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const currency = document.getElementById('regCurrency').value;
+
+            if (db.users[email]) {
+                showToast('Error', 'An account with this email already exists. Please sign in.', 'error');
+                return;
+            }
+
+            const accountNumber = generateAccountNumber(email);
+
+            db.users[email] = {
+                profile: {
+                    name,
+                    email,
+                    phone,
+                    avatar: null,
+                    currency
+                },
+                account: {
+                    accountNumber,
+                    routing: generateRouting(email),
+                    balance: 0
+                },
+                transactions: [],
+                cards: [],
+                notifications: [
+                    {
+                        id: Date.now(),
+                        title: 'Welcome to Nexus Bank',
+                        message: `Your account ${accountNumber} has been created successfully.`,
+                        time: new Date().toISOString(),
+                        read: false
+                    }
+                ],
+                security: {
+                    passwordHash: hashPassword(password),
+                    pin: null,
+                    twoFactorEnabled: true
+                }
+            };
+
+            saveDB();
+
+            // Auto login
+            clearSession();
+            session.currentEmail = email;
+            session.loginTime = Date.now();
+            saveSession();
+
+            showToast('Success', 'Account created successfully!', 'success');
+            showMainApp();
+
+            // Show sync code reminder
+            setTimeout(() => {
+                showToast('Important', 'Go to Profile and copy your Sync Code to use on other devices!', 'info');
+            }, 2000);
+        }
+
+        function handleLogout() {
+            clearSession();
+            showAuthScreen();
+            showToast('Success', 'Logged out successfully', 'success');
+        }
+
+        // ======================
+        // SYNC SYSTEM
+        // ======================
+        function exportSyncCode() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const exportData = {
+                version: 2,
+                email: user.profile.email,
+                data: user
+            };
+
+            const code = btoa(JSON.stringify(exportData));
+            document.getElementById('exportSyncCodeDisplay').value = code;
+            openModal('exportSyncModal');
+        }
+
+        function copySyncCode() {
+            const code = document.getElementById('exportSyncCodeDisplay');
+            code.select();
+            code.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(code.value).then(() => {
+                showToast('Copied', 'Sync code copied to clipboard!', 'success');
+            });
+        }
+
+        function handleImportSync(e) {
+            e.preventDefault();
+            const code = document.getElementById('syncCodeInput').value.trim();
+            importSyncData(code, true);
+        }
+
+        function handleImportSyncFromProfile(e) {
+            e.preventDefault();
+            const code = document.getElementById('profileSyncCodeInput').value.trim();
+            importSyncData(code, false);
+        }
+
+        function importSyncData(code, redirectToLogin) {
+            try {
+                const decoded = JSON.parse(atob(code));
+                if (!decoded.data || !decoded.data.profile || !decoded.data.profile.email) {
+                    throw new Error('Invalid sync code');
+                }
+
+                const email = decoded.data.profile.email;
+
+                // Merge or create
+                if (db.users[email]) {
+                    // Update existing
+                    db.users[email] = decoded.data;
+                } else {
+                    // Create new
+                    db.users[email] = decoded.data;
+                }
+
+                saveDB();
+
+                if (redirectToLogin) {
+                    showToast('Success', 'Account restored! Please sign in.', 'success');
+                    showLogin();
+                    document.getElementById('loginEmail').value = email;
+                } else {
+                    showToast('Success', 'Account data imported successfully!', 'success');
+                    closeModalDirect('importSyncModal');
+                    refreshProfile();
+                    refreshDashboard();
+                }
+            } catch (e) {
+                showToast('Error', 'Invalid sync code. Please check and try again.', 'error');
+            }
+        }
+
+        function showImportSyncModal() {
+            openModal('importSyncModal');
+        }
+
+        // ======================
+        // UI NAVIGATION
+        // ======================
+        function showAuthScreen() {
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            showLogin();
+        }
+
+        function showMainApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            refreshDashboard();
+            refreshProfile();
+            navigateTo('home');
+        }
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`page-${page}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('text-primary-600', 'dark:text-primary-400');
+                el.classList.add('text-gray-400');
+            });
+
+            const activeNav = document.querySelector(`[data-page="${page}"]`);
+            if (activeNav) {
+                activeNav.classList.remove('text-gray-400');
+                activeNav.classList.add('text-primary-600', 'dark:text-primary-400');
+            }
+
+            if (page === 'history') {
+                renderTransactions();
+            } else if (page === 'cards') {
+                renderCards();
+            } else if (page === 'home') {
+                refreshDashboard();
+            }
+
+            window.scrollTo(0, 0);
+            lucide.createIcons();
+        }
+
+        // ======================
+        // DASHBOARD
+        // ======================
+        function refreshDashboard() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const sym = currencySymbols[user.profile.currency] || '₦';
+            const bal = formatMoney(user.account.balance, user.profile.currency);
+
+            document.getElementById('balanceDisplay').textContent = bal;
+            document.getElementById('accountNumberDisplay').textContent = user.account.accountNumber;
+            document.getElementById('routingDisplay').textContent = user.account.routing;
+            document.getElementById('currencySelector').value = user.profile.currency;
+
+            document.getElementById('transferCurrencySymbol').textContent = sym;
+            document.getElementById('depositCurrencySymbol').textContent = sym;
+
+            // Calculate income/expense
+            let income = 0, expense = 0;
+            user.transactions.forEach(t => {
+                if (t.type === 'income' || t.amount > 0) income += Math.abs(t.amount);
+                else expense += Math.abs(t.amount);
+            });
+
+            document.getElementById('incomeDisplay').textContent = sym + formatNumber(income);
+            document.getElementById('expenseDisplay').textContent = sym + formatNumber(expense);
+
+            // Recent transactions
+            const recent = [...user.transactions].reverse().slice(0, 5);
+            const container = document.getElementById('recentTransactionsList');
+            container.innerHTML = recent.length ? recent.map(t => renderTransactionItem(t, user.profile.currency)).join('') : 
+                '<div class="text-center text-gray-400 py-8">No transactions yet</div>';
+
+            // Update header
+            updateHeaderAvatar(user);
+            updateNotificationBadge(user);
+
+            lucide.createIcons();
+        }
+
+        function refreshProfile() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            document.getElementById('profileName').textContent = user.profile.name;
+            document.getElementById('profileEmail').textContent = user.profile.email;
+            document.getElementById('profileNameField').textContent = user.profile.name;
+            document.getElementById('profileEmailField').textContent = user.profile.email;
+            document.getElementById('profilePhoneField').textContent = user.profile.phone;
+            document.getElementById('profileAccountField').textContent = user.account.accountNumber;
+            document.getElementById('profileCurrencyField').textContent = user.profile.currency + ' - ' + getCurrencyName(user.profile.currency);
+
+            document.getElementById('pinStatus').textContent = user.security.pin ? 'Change PIN' : 'Set PIN';
+            document.getElementById('twoFaStatus').textContent = user.security.twoFactorEnabled ? 'Enabled' : 'Disabled';
+            document.getElementById('twoFaStatus').className = user.security.twoFactorEnabled ? 'text-xs text-green-600 font-medium' : 'text-xs text-gray-500 font-medium';
+
+            // Avatar
+            const fallback = document.getElementById('profileAvatarFallback');
+            const img = document.getElementById('profileAvatar');
+
+            if (user.profile.avatar) {
+                img.src = user.profile.avatar;
+                img.classList.remove('hidden');
+                fallback.classList.add('hidden');
+            } else {
+                img.classList.add('hidden');
+                fallback.classList.remove('hidden');
+                fallback.textContent = user.profile.name.charAt(0).toUpperCase();
+            }
+
+            updateHeaderAvatar(user);
+        }
+
+        function updateHeaderAvatar(user) {
+            const fallback = document.getElementById('headerAvatarFallback');
+            const img = document.getElementById('headerAvatar');
+
+            if (user.profile.avatar) {
+                img.src = user.profile.avatar;
+                img.classList.remove('hidden');
+                fallback.classList.add('hidden');
+            } else {
+                img.classList.add('hidden');
+                fallback.classList.remove('hidden');
+                fallback.textContent = user.profile.name.charAt(0).toUpperCase();
+            }
+        }
+
+        // ======================
+        // TRANSACTIONS
+        // ======================
+        function renderTransactionItem(t, currency) {
+            const sym = currencySymbols[currency] || '₦';
+            const isPositive = t.type === 'income' || t.amount > 0;
+            const icon = t.icon || (isPositive ? 'arrow-down-left' : 'arrow-up-right');
+            const colorClass = isPositive ? 'bg-green-100 dark:bg-green-900/30 text-green-600' : 'bg-red-100 dark:bg-red-900/30 text-red-600';
+            const amountClass = isPositive ? 'text-green-600' : 'text-gray-900 dark:text-white';
+            const sign = isPositive ? '+' : '-';
+
+            return `
+                <div class="transaction-item flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 cursor-pointer" onclick="showReceipt(${t.id})">
+                    <div class="w-12 h-12 ${colorClass} rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="${icon}" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-sm truncate">${t.recipient || t.description || 'Transaction'}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${t.category || 'Transfer'} • ${formatDate(t.date)}</div>
+                    </div>
+                    <div class="font-bold text-sm ${amountClass} whitespace-nowrap">${sign}${sym}${formatNumber(Math.abs(t.amount))}</div>
+                </div>
+            `;
+        }
+
+        function renderTransactions() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            let txs = [...user.transactions].reverse();
+            if (currentFilter === 'income') {
+                txs = txs.filter(t => t.type === 'income' || t.amount > 0);
+            } else if (currentFilter === 'expense') {
+                txs = txs.filter(t => t.type === 'expense' || t.amount < 0);
+            }
+
+            const container = document.getElementById('historyTransactionsList');
+            container.innerHTML = txs.length ? txs.map(t => renderTransactionItem(t, user.profile.currency)).join('') : 
+                '<div class="text-center text-gray-400 py-8">No transactions found</div>';
+
+            lucide.createIcons();
+        }
+
+        function filterTransactions(type) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-primary-600', 'text-white');
+                btn.classList.add('bg-gray-100', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
+            });
+            document.getElementById(`filter-${type}`).classList.remove('bg-gray-100', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
+            document.getElementById(`filter-${type}`).classList.add('bg-primary-600', 'text-white');
+            renderTransactions();
+        }
+
+        // ======================
+        // TRANSFER & DEPOSIT
+        // ======================
+        function handleTransfer(e) {
+            e.preventDefault();
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const name = document.getElementById('transferName').value;
+            const account = document.getElementById('transferAccount').value;
+            const bank = document.getElementById('transferBank').value;
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+            const desc = document.getElementById('transferDesc').value || 'Transfer';
+
+            if (amount <= 0) {
+                showToast('Error', 'Please enter a valid amount', 'error');
+                return;
+            }
+
+            if (amount > user.account.balance) {
+                showToast('Error', 'Insufficient balance', 'error');
+                return;
+            }
+
+            pendingAction = () => {
+                user.account.balance -= amount;
+                const tx = {
+                    id: Date.now(),
+                    type: 'expense',
+                    amount: -amount,
+                    recipient: name,
+                    account: account,
+                    bank: bank,
+                    description: desc,
+                    category: 'Transfer',
+                    date: new Date().toISOString(),
+                    icon: 'send'
+                };
+                user.transactions.push(tx);
+
+                user.notifications.unshift({
+                    id: Date.now(),
+                    title: 'Transfer Sent',
+                    message: `You sent ${currencySymbols[user.profile.currency]}${formatNumber(amount)} to ${name}`,
+                    time: new Date().toISOString(),
+                    read: false
+                });
+
+                saveDB();
+                showReceipt(tx.id);
+                refreshDashboard();
+
+                document.getElementById('transferName').value = '';
+                document.getElementById('transferAccount').value = '';
+                document.getElementById('transferBank').value = '';
+                document.getElementById('transferAmount').value = '';
+                document.getElementById('transferDesc').value = '';
+            };
+
+            if (user.security.pin) {
+                showPinModal('Enter PIN', 'Confirm your transfer', () => {
+                    pendingAction();
+                    pendingAction = null;
+                });
+            } else {
+                pendingAction();
+                pendingAction = null;
+            }
+        }
+
+        function handleDeposit(e) {
+            e.preventDefault();
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            const source = document.getElementById('depositSource').value;
+
+            if (amount <= 0) {
+                showToast('Error', 'Please enter a valid amount', 'error');
+                return;
+            }
+
+            pendingAction = () => {
+                user.account.balance += amount;
+                const tx = {
+                    id: Date.now(),
+                    type: 'income',
+                    amount: amount,
+                    recipient: 'Self',
+                    description: `Deposit via ${source}`,
+                    category: 'Deposit',
+                    date: new Date().toISOString(),
+                    icon: 'plus-circle'
+                };
+                user.transactions.push(tx);
+
+                user.notifications.unshift({
+                    id: Date.now() + 1,
+                    title: 'Deposit Received',
+                    message: `${currencySymbols[user.profile.currency]}${formatNumber(amount)} has been added to your account`,
+                    time: new Date().toISOString(),
+                    read: false
+                });
+
+                saveDB();
+                showReceipt(tx.id);
+                refreshDashboard();
+
+                document.getElementById('depositAmount').value = '';
+            };
+
+            if (user.security.pin) {
+                showPinModal('Enter PIN', 'Confirm your deposit', () => {
+                    pendingAction();
+                    pendingAction = null;
+                });
+            } else {
+                pendingAction();
+                pendingAction = null;
+            }
+        }
+
+        // ======================
+        // RECEIPT
+        // ======================
+        function showReceipt(txId) {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const tx = user.transactions.find(t => t.id === txId);
+            if (!tx) return;
+
+            const sym = currencySymbols[user.profile.currency] || '₦';
+
+            document.getElementById('receiptId').textContent = 'TXN-' + tx.id;
+            document.getElementById('receiptDate').textContent = formatDateTime(tx.date);
+            document.getElementById('receiptType').textContent = tx.type === 'income' ? 'Deposit' : 'Transfer';
+            document.getElementById('receiptRecipient').textContent = tx.recipient || 'Self';
+            document.getElementById('receiptDesc').textContent = tx.description || '-';
+            document.getElementById('receiptAmount').textContent = sym + formatNumber(Math.abs(tx.amount));
+            document.getElementById('receiptBalance').textContent = formatMoney(user.account.balance, user.profile.currency);
+
+            document.getElementById('receiptModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeReceiptModal(e) {
+            if (e.target === document.getElementById('receiptModal')) {
+                document.getElementById('receiptModal').classList.add('hidden');
+            }
+        }
+
+        function closeReceiptModalDirect() {
+            document.getElementById('receiptModal').classList.add('hidden');
+        }
+
+        function downloadReceipt() {
+            const receipt = document.getElementById('receiptContent');
+            html2canvas(receipt).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'receipt-' + Date.now() + '.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                showToast('Success', 'Receipt saved!', 'success');
+            });
+        }
+
+        function printReceipt() {
+            window.print();
+        }
+
+        // ======================
+        // CARDS
+        // ======================
+        function renderCards() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const container = document.getElementById('cardsList');
+            if (!user.cards || user.cards.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 py-8">No cards added yet</div>';
+                return;
+            }
+
+            container.innerHTML = user.cards.map((card, idx) => `
+                <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-5 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="wifi" class="w-5 h-5 text-white/60 rotate-90"></i>
+                                <span class="text-white/60 text-xs">Contactless</span>
+                            </div>
+                            <span class="text-white/60 text-xs">${card.type || 'Debit'}</span>
+                        </div>
+                        <div class="font-mono text-lg tracking-widest mb-4">${formatCardNumber(card.number)}</div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-white/60 text-xs">Cardholder</div>
+                                <div class="text-sm font-medium uppercase">${card.holder}</div>
+                            </div>
+                            <div>
+                                <div class="text-white/60 text-xs">Expires</div>
+                                <div class="text-sm font-medium">${card.expiry}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                        <button onclick="toggleFreezeCard(${idx})" class="text-xs text-white/80 hover:text-white flex items-center gap-1">
+                            <i data-lucide="${card.frozen ? 'unlock' : 'snowflake'}" class="w-3 h-3"></i>
+                            ${card.frozen ? 'Unfreeze' : 'Freeze'}
+                        </button>
+                        <button onclick="deleteCard(${idx})" class="text-xs text-red-400 hover:text-red-300 flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-3 h-3"></i>
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function formatCardNumber(num) {
+            return num.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim();
+        }
+
+        function showAddCard() {
+            openModal('addCardModal');
+        }
+
+        function handleAddCard(e) {
+            e.preventDefault();
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const number = document.getElementById('cardNumber').value;
+            const expiry = document.getElementById('cardExpiry').value;
+            const cvv = document.getElementById('cardCvv').value;
+            const holder = document.getElementById('cardHolder').value;
+
+            user.cards.push({ number, expiry, cvv, holder, frozen: false, type: 'Debit' });
+            saveDB();
+
+            closeModalDirect('addCardModal');
+            renderCards();
+            showToast('Success', 'Card added successfully!', 'success');
+
+            document.getElementById('cardNumber').value = '';
+            document.getElementById('cardExpiry').value = '';
+            document.getElementById('cardCvv').value = '';
+            document.getElementById('cardHolder').value = '';
+        }
+
+        function toggleFreezeCard(idx) {
+            const user = getCurrentUser();
+            if (!user || !user.cards[idx]) return;
+
+            user.cards[idx].frozen = !user.cards[idx].frozen;
+            saveDB();
+            renderCards();
+            showToast('Success', user.cards[idx].frozen ? 'Card frozen' : 'Card unfrozen', 'success');
+        }
+
+        function deleteCard(idx) {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            user.cards.splice(idx, 1);
+            saveDB();
+            renderCards();
+            showToast('Success', 'Card removed', 'success');
+        }
+
+        // ======================
+        // PIN SYSTEM
+        // ======================
+        function showPinModal(title, subtitle, callback) {
+            currentPin = '';
+            pinCallback = callback;
+            document.getElementById('pinTitle').textContent = title;
+            document.getElementById('pinSubtitle').textContent = subtitle;
+            updatePinDots();
+            document.getElementById('pinModal').classList.remove('hidden');
+        }
+
+        function enterPinDigit(digit) {
+            if (currentPin.length < 4) {
+                currentPin += digit;
+                updatePinDots();
+
+                if (currentPin.length === 4) {
+                    setTimeout(() => {
+                        verifyPin();
+                    }, 200);
+                }
+            }
+        }
+
+        function clearPinDigit() {
+            currentPin = currentPin.slice(0, -1);
+            updatePinDots();
+        }
+
+        function cancelPin() {
+            document.getElementById('pinModal').classList.add('hidden');
+            currentPin = '';
+            pinCallback = null;
+        }
+
+        function updatePinDots() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`pinDot${i}`);
+                if (i <= currentPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            }
+        }
+
+        function verifyPin() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            if (user.security.pin === currentPin) {
+                document.getElementById('pinModal').classList.add('hidden');
+                if (pinCallback) pinCallback();
+                currentPin = '';
+                pinCallback = null;
+            } else {
+                showToast('Error', 'Incorrect PIN', 'error');
+                currentPin = '';
+                updatePinDots();
+            }
+        }
+
+        function showSetPin() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            if (user.security.pin) {
+                // Change PIN flow
+                const newPin = prompt('Enter new 4-digit PIN:');
+                if (newPin && newPin.length === 4 && /^\d+$/.test(newPin)) {
+                    user.security.pin = newPin;
+                    saveDB();
+                    refreshProfile();
+                    showToast('Success', 'PIN updated successfully!', 'success');
+                } else if (newPin) {
+                    showToast('Error', 'PIN must be 4 digits', 'error');
+                }
+            } else {
+                // Set new PIN
+                const newPin = prompt('Set your 4-digit transaction PIN:');
+                if (newPin && newPin.length === 4 && /^\d+$/.test(newPin)) {
+                    user.security.pin = newPin;
+                    saveDB();
+                    refreshProfile();
+                    showToast('Success', 'PIN set successfully!', 'success');
+                } else if (newPin) {
+                    showToast('Error', 'PIN must be 4 digits', 'error');
+                }
+            }
+        }
+
+        // ======================
+        // SECURITY
+        // ======================
+        function showChangePassword() {
+            openModal('changePasswordModal');
+        }
+
+        function handleChangePassword(e) {
+            e.preventDefault();
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmNewPassword').value;
+
+            if (user.security.passwordHash !== hashPassword(current)) {
+                showToast('Error', 'Current password is incorrect', 'error');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                showToast('Error', 'New passwords do not match', 'error');
+                return;
+            }
+
+            user.security.passwordHash = hashPassword(newPass);
+            saveDB();
+
+            closeModalDirect('changePasswordModal');
+            showToast('Success', 'Password changed successfully!', 'success');
+
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+        }
+
+        function toggle2FA() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            user.security.twoFactorEnabled = !user.security.twoFactorEnabled;
+            saveDB();
+            refreshProfile();
+            showToast('Success', user.security.twoFactorEnabled ? '2FA Enabled' : '2FA Disabled', 'success');
+        }
+
+        function showEditProfile() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            document.getElementById('editName').value = user.profile.name;
+            document.getElementById('editPhone').value = user.profile.phone;
+            document.getElementById('editCurrency').value = user.profile.currency;
+            openModal('editProfileModal');
+        }
+
+        function handleEditProfile(e) {
+            e.preventDefault();
+            const user = getCurrentUser();
+            if (!user) return;
+
+            user.profile.name = document.getElementById('editName').value;
+            user.profile.phone = document.getElementById('editPhone').value;
+            user.profile.currency = document.getElementById('editCurrency').value;
+            saveDB();
+
+            closeModalDirect('editProfileModal');
+            refreshProfile();
+            refreshDashboard();
+            showToast('Success', 'Profile updated!', 'success');
+        }
+
+        function handleAvatarUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const user = getCurrentUser();
+                if (!user) return;
+
+                user.profile.avatar = event.target.result;
+                saveDB();
+                refreshProfile();
+                showToast('Success', 'Profile photo updated!', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ======================
+        // NOTIFICATIONS
+        // ======================
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            panel.classList.toggle('hidden');
+
+            if (!panel.classList.contains('hidden')) {
+                renderNotifications();
+            }
+        }
+
+        function renderNotifications() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            const container = document.getElementById('notificationsList');
+            const notifs = user.notifications || [];
+
+            container.innerHTML = notifs.length ? notifs.map(n => `
+                <div class="p-4 border-b border-gray-100 dark:border-gray-800 ${n.read ? 'opacity-60' : ''}">
+                    <div class="flex items-start gap-3">
+                        <div class="w-2 h-2 rounded-full bg-primary-500 mt-2 flex-shrink-0 ${n.read ? 'hidden' : ''}"></div>
+                        <div class="flex-1">
+                            <div class="font-medium text-sm">${n.title}</div>
+                            <div class="text-xs text-gray-500 mt-1">${n.message}</div>
+                            <div class="text-xs text-gray-400 mt-2">${formatDate(n.time)}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('') : '<div class="text-center text-gray-400 py-8">No notifications</div>';
+
+            // Mark all as read
+            notifs.forEach(n => n.read = true);
+            saveDB();
+            updateNotificationBadge(user);
+        }
+
+        function updateNotificationBadge(user) {
+            const unread = (user.notifications || []).filter(n => !n.read).length;
+            const badge = document.getElementById('notifBadge');
+            if (unread > 0) {
+                badge.textContent = unread > 9 ? '9+' : unread;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function clearAllNotifications() {
+            const user = getCurrentUser();
+            if (!user) return;
+            user.notifications = [];
+            saveDB();
+            renderNotifications();
+        }
+
+        // ======================
+        // THEME
+        // ======================
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('nexusBank_theme', html.classList.contains('dark') ? 'dark' : 'light');
+            updateThemeIcons();
+        }
+
+        function applyTheme() {
+            const saved = localStorage.getItem('nexusBank_theme');
+            if (saved === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else if (saved === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+            updateThemeIcons();
+        }
+
+        function updateThemeIcons() {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.querySelectorAll('.sun-icon').forEach(el => el.classList.toggle('hidden', isDark));
+            document.querySelectorAll('.moon-icon').forEach(el => el.classList.toggle('hidden', !isDark));
+        }
+
+        // ======================
+        // UTILITIES
+        // ======================
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        function toggleBalanceVisibility() {
+            balanceVisible = !balanceVisible;
+            const display = document.getElementById('balanceDisplay');
+            const icon = document.getElementById('balanceEyeIcon');
+            const user = getCurrentUser();
+
+            if (balanceVisible) {
+                display.textContent = formatMoney(user.account.balance, user.profile.currency);
+                icon.setAttribute('data-lucide', 'eye');
+            } else {
+                display.textContent = '****';
+                icon.setAttribute('data-lucide', 'eye-off');
+            }
+            lucide.createIcons();
+        }
+
+        function changeCurrency(curr) {
+            const user = getCurrentUser();
+            if (!user) return;
+            user.profile.currency = curr;
+            saveDB();
+            refreshDashboard();
+        }
+
+        function formatMoney(amount, currency) {
+            const sym = currencySymbols[currency] || '₦';
+            return sym + formatNumber(amount);
+        }
+
+        function formatNumber(num) {
+            return Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatDate(iso) {
+            const d = new Date(iso);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function formatDateTime(iso) {
+            const d = new Date(iso);
+            return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getCurrencyName(code) {
+            const names = { NGN: 'Nigerian Naira', USD: 'US Dollar', EUR: 'Euro', GBP: 'British Pound' };
+            return names[code] || code;
+        }
+
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const titleEl = document.getElementById('toastTitle');
+            const msgEl = document.getElementById('toastMessage');
+            const iconEl = document.getElementById('toastIcon');
+
+            titleEl.textContent = title;
+            msgEl.textContent = message;
+
+            if (type === 'success') {
+                iconEl.innerHTML = '<div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+            } else if (type === 'error') {
+                iconEl.innerHTML = '<div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>';
+            } else {
+                iconEl.innerHTML = '<div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></div>';
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function openSupport() {
+            showToast('Support', 'Customer support: support@nexusbank.com', 'info');
+        }
+
+        function showForgotPassword() {
+            showToast('Info', 'Please contact support to reset your password.', 'info');
+        }
+
+        // ======================
+        // MODAL HELPERS
+        // ======================
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id, e) {
+            if (e.target === document.getElementById(id)) {
+                document.getElementById(id).classList.add('hidden');
+            }
+        }
+
+        function closeModalDirect(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // ======================
+        // START
+        // ======================
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
